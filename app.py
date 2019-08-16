@@ -32,7 +32,7 @@ def callback():
     #print("使用者：", user)
     #print("內容：", text)
     #sendText(user, text)
-    return ''
+    return 'ok'
 
 
 if __name__ == '__main__':
