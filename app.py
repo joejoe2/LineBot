@@ -24,9 +24,9 @@ def index():
     d1 = datetime.datetime.now().astimezone(pytz.timezone("Asia/Taipei"))
     d2 = datetime.datetime.now().astimezone(pytz.timezone("Asia/Tokyo"))
     d3 = datetime.datetime.now().astimezone(pytz.timezone("America/Los_Angeles"))
-    return "<p>Hello World!" + "<br>" + "Taiwan : " + str(d1) \
-           + "Japan : " + "<br>" + str(d2) \
-           + "Los_Angeles : " + "<br>" + str(d3) + "</p>"
+    return "<p>Hello World!" + "<br>" + "Taiwan : " + str(d1)
+           + "<br>"+"Japan : " + str(d2)
+           + "<br>"+"Los_Angeles : " + str(d3) + "</p>"
 
 
 @app.route("/callback", methods=['POST'])
@@ -58,8 +58,8 @@ def handle_message(event: MessageEvent):
         d3 = datetime.datetime.now().astimezone(pytz.timezone("America/Los_Angeles"))
         line_bot_api.reply_message(event.reply_token,
                                    TextSendMessage(text="Taiwan : " + str(d1)
-                                                        + "Japan : " + "\n" + str(d2)
-                                                        + "Los_Angeles : " + "\n" + str(d3) + "</p>"))
+                                                        + "\n"+"Japan : " + str(d2)
+                                                        + "\n"+"Los_Angeles : "+ str(d3)))
     else:
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text=user_id + " say : " + text))
 
