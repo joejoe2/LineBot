@@ -1,4 +1,6 @@
 import json
+import datetime
+import pytz
 from flask import Flask, request, abort
 from linebot import (
     LineBotApi, WebhookHandler
@@ -10,7 +12,8 @@ from linebot.models import (
     MessageEvent, TextMessage, TextSendMessage,
 )
 
-line_bot_api = LineBotApi('uJ6LnR2TWpOmYqSYW9yg1nSe1GO9+c3euzndfcjTeTSlfz1r58dfBxpnNySHjq7/oUAmiO0VBDHb5HyLSdnu+PXMA71HJkbT4jwqfTDXhpXRAWOFsEVbpjbDNahvbXVLVh9cZsTLH+yB3cxwMsyC/gdB04t89/1O/w1cDnyilFU=')
+line_bot_api = LineBotApi(
+    'uJ6LnR2TWpOmYqSYW9yg1nSe1GO9+c3euzndfcjTeTSlfz1r58dfBxpnNySHjq7/oUAmiO0VBDHb5HyLSdnu+PXMA71HJkbT4jwqfTDXhpXRAWOFsEVbpjbDNahvbXVLVh9cZsTLH+yB3cxwMsyC/gdB04t89/1O/w1cDnyilFU=')
 handler = WebhookHandler('905c2e3f57145acb7d791c46dec9a573')
 
 app = Flask(__name__)
@@ -18,7 +21,12 @@ app = Flask(__name__)
 
 @app.route('/')
 def index():
-    return "<p>Hello World!</p>"
+    d1 = datetime.datetime.now().astimezone(pytz.timezone("Asia/Taipei"))
+    d2 = datetime.datetime.now().astimezone(pytz.timezone("Asia/Tokyo"))
+    d3 = datetime.datetime.now().astimezone(pytz.timezone("America/Los_Angeles"))
+    return "<p>Hello World!" + "<br>" + "Taiwan : " + str(d1) \
+           + "Japan : " + "<br>" + str(d2) \
+           + "Los_Angeles : " + "<br>" + str(d3) + "</p>"
 
 
 @app.route("/callback", methods=['POST'])
@@ -42,9 +50,18 @@ def callback():
 
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event: MessageEvent):
-    line_bot_api.reply_message(
-        event.reply_token,
-        TextSendMessage(text=event.source.user_id+" say : "+event.message.text))
+    text: str = event.message.text
+    user_id = event.source.user_id
+    if text == "time" or text == "時間":
+        d1 = datetime.datetime.now().astimezone(pytz.timezone("Asia/Taipei"))
+        d2 = datetime.datetime.now().astimezone(pytz.timezone("Asia/Tokyo"))
+        d3 = datetime.datetime.now().astimezone(pytz.timezone("America/Los_Angeles"))
+        line_bot_api.reply_message(event.reply_token,
+                                   TextSendMessage(text="Taiwan : " + str(d1)
+                                                        + "Japan : " + "\n" + str(d2)
+                                                        + "Los_Angeles : " + "\n" + str(d3) + "</p>"))
+    else:
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=user_id + " say : " + text))
 
 
 if __name__ == '__main__':
