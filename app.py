@@ -24,8 +24,8 @@ def index():
     d1 = datetime.datetime.now().astimezone(pytz.timezone("Asia/Taipei"))
     d2 = datetime.datetime.now().astimezone(pytz.timezone("Asia/Tokyo"))
     d3 = datetime.datetime.now().astimezone(pytz.timezone("America/Los_Angeles"))
-    return "<p>Hello World!" + "<br>" + "Taiwan : " + str(d1)
-           + "<br>"+"Japan : " + str(d2)
+    return "<p>Hello World!" + "<br>" + "Taiwan : " + str(d1)\
+           + "<br>"+"Japan : " + str(d2)\
            + "<br>"+"Los_Angeles : " + str(d3) + "</p>"
 
 
@@ -57,8 +57,8 @@ def handle_message(event: MessageEvent):
         d2 = datetime.datetime.now().astimezone(pytz.timezone("Asia/Tokyo"))
         d3 = datetime.datetime.now().astimezone(pytz.timezone("America/Los_Angeles"))
         line_bot_api.reply_message(event.reply_token,
-                                   TextSendMessage(text="Taiwan : " + str(d1)
-                                                        + "\n"+"Japan : " + str(d2)
+                                   TextSendMessage(text="Taiwan : " + str(d1)\
+                                                        + "\n"+"Japan : " + str(d2)\
                                                         + "\n"+"Los_Angeles : "+ str(d3)))
     else:
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text=user_id + " say : " + text))
