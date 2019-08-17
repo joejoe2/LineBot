@@ -1,4 +1,5 @@
 import json
+import sys
 import datetime
 import pytz
 from flask import Flask, request, abort
@@ -24,9 +25,7 @@ def index():
     d1 = datetime.datetime.now().astimezone(pytz.timezone("Asia/Taipei"))
     d2 = datetime.datetime.now().astimezone(pytz.timezone("Asia/Tokyo"))
     d3 = datetime.datetime.now().astimezone(pytz.timezone("America/Los_Angeles"))
-    return "<p>Hello World!" + "<br>" + "Taiwan : " + str(d1)\
-           + "<br>"+"Japan : " + str(d2)\
-           + "<br>"+"Los_Angeles : " + str(d3) + "</p>"
+    return "<p>Hello World!" + "<br>" + "Taiwan : " + str(d1)+"<br>"+"Japan : "+str(d2)+"<br>"+"Los_Angeles : "+str(d3)+"</p>"
 
 
 @app.route("/callback", methods=['POST'])
@@ -41,8 +40,11 @@ def callback():
     # handle webhook body
     try:
         handler.handle(body, signature)
+        print("received post at /callback")
+        sys.stdout.flush()
     except InvalidSignatureError:
-        print("Invalid signature. Please check your channel access token/channel secret.")
+        print("Invalid signature. Please check your channel access token/channel secret")
+        sys.stdout.flush()
         abort(400)
 
     return 'OK'
@@ -52,16 +54,16 @@ def callback():
 def handle_message(event: MessageEvent):
     text: str = event.message.text
     user_id = event.source.user_id
+    profile = line_bot_api.get_profile(user_id)
+    user_name = profile.display_name
     if text == "time" or text == "時間":
         d1 = datetime.datetime.now().astimezone(pytz.timezone("Asia/Taipei"))
         d2 = datetime.datetime.now().astimezone(pytz.timezone("Asia/Tokyo"))
         d3 = datetime.datetime.now().astimezone(pytz.timezone("America/Los_Angeles"))
         line_bot_api.reply_message(event.reply_token,
-                                   TextSendMessage(text="Taiwan : " + str(d1)\
-                                                        + "\n"+"Japan : " + str(d2)\
-                                                        + "\n"+"Los_Angeles : "+ str(d3)))
+                                   TextSendMessage(text="Taiwan : "+str(d1)+"\n"+"Japan : "+str(d2)+"\n"+"Los_Angeles : "+str(d3)))
     else:
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=user_id + " say : " + text))
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=user_name + " say : " + text))
 
 
 if __name__ == '__main__':
