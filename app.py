@@ -26,7 +26,7 @@ def index():
     d1 = datetime.datetime.now().astimezone(pytz.timezone("Asia/Taipei"))
     d2 = datetime.datetime.now().astimezone(pytz.timezone("Asia/Tokyo"))
     d3 = datetime.datetime.now().astimezone(pytz.timezone("America/Los_Angeles"))
-    # print(type(get_luis("2")))
+    # print(get_luis("2"))
     return "<p>Hello World!" + "<br>" + get_time(sep="<br>") + "</p>"
 
 
@@ -77,7 +77,7 @@ def get_time(sep="\n"):
 def get_luis(text):
     headers = {
         # Request headers
-        'Ocp-Apim-Subscription-Key': '83ca8ec7e88c4e7bbf45c063080b3b68',
+        'Ocp-Apim-Subscription-Key': '6ac4b71081b84e3db81f589f774e956c',
     }
 
     params = {
@@ -94,7 +94,7 @@ def get_luis(text):
         r = requests.get(
             "https://westus.api.cognitive.microsoft.com/luis/v2.0/apps/d85bc3b4-80a6-4c0d-8aae-79627ca915d4",
             headers=headers, params=params)
-        return json.dumps(r.json())
+        return json.dumps(r.json(),)
 
     except Exception as e:
         return str(e)
