@@ -1,0 +1,5 @@
+#format [ins name]
+[time] ignore case =>get time
+[時間] 		   =>get time
+#format [ins name] ...content
+[with luis score] =>with luis scores

@@ -1,4 +1,5 @@
 import json
+import requests
 import sys
 import datetime
 import pytz
@@ -25,7 +26,7 @@ def index():
     d1 = datetime.datetime.now().astimezone(pytz.timezone("Asia/Taipei"))
     d2 = datetime.datetime.now().astimezone(pytz.timezone("Asia/Tokyo"))
     d3 = datetime.datetime.now().astimezone(pytz.timezone("America/Los_Angeles"))
-    return "<p>Hello World!" + "<br>" + "Taiwan : " + str(d1)+"<br>"+"Japan : "+str(d2)+"<br>"+"Los_Angeles : "+str(d3)+"</p>"
+    return "<p>Hello World!" + "<br>" + get_time(sep="<br>") + "</p>"
 
 
 @app.route("/callback", methods=['POST'])
@@ -56,14 +57,46 @@ def handle_message(event: MessageEvent):
     user_id = event.source.user_id
     profile = line_bot_api.get_profile(user_id)
     user_name = profile.display_name
-    if text == "time" or text == "時間":
-        d1 = datetime.datetime.now().astimezone(pytz.timezone("Asia/Taipei"))
-        d2 = datetime.datetime.now().astimezone(pytz.timezone("Asia/Tokyo"))
-        d3 = datetime.datetime.now().astimezone(pytz.timezone("America/Los_Angeles"))
+    if text.lower().startswith("[time]") or text.startswith("[時間]"):
         line_bot_api.reply_message(event.reply_token,
-                                   TextSendMessage(text="Taiwan : "+str(d1)+"\n"+"Japan : "+str(d2)+"\n"+"Los_Angeles : "+str(d3)))
+                                   TextSendMessage(text=get_time("\n")))
+    elif text.startswith("[with luis score]"):
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=get_luis(text)))
     else:
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text=user_name + " say : " + text))
+
+
+def get_time(sep="\n"):
+    d1 = datetime.datetime.now().astimezone(pytz.timezone("Asia/Taipei"))
+    d2 = datetime.datetime.now().astimezone(pytz.timezone("Asia/Tokyo"))
+    d3 = datetime.datetime.now().astimezone(pytz.timezone("America/Los_Angeles"))
+    return "Taiwan : "+str(d1)+sep+"Japan : "+str(d2)+sep+"Los_Angeles : "+str(d3)
+
+
+def get_luis(text):
+    headers = {
+        # Request headers
+        'Ocp-Apim-Subscription-Key': '83ca8ec7e88c4e7bbf45c063080b3b68',
+    }
+
+    params = {
+        # Query parameter
+        'q': text,
+        # Optional request parameters, set to default values
+        'timezoneOffset': '0',
+        'verbose': 'false',
+        'spellCheck': 'false',
+        'staging': 'false',
+    }
+
+    try:
+        r = requests.get(
+            "https://westus.api.cognitive.microsoft.com/luis/v2.0/apps/d85bc3b4-80a6-4c0d-8aae-79627ca915d4",
+            headers=headers, params=params)
+        return r.json()
+
+    except Exception as e:
+        return "[Errno {0}] {1}".format(e.errno, e.strerror)
 
 
 if __name__ == '__main__':
