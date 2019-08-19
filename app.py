@@ -96,7 +96,7 @@ def get_luis(text):
         return r.json()
 
     except Exception as e:
-        return "[Errno {0}] {1}".format(e.errno, e.strerror)
+        return str(e)
 
 
 if __name__ == '__main__':
