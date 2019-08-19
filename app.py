@@ -74,25 +74,10 @@ def get_time(sep="\n"):
 
 
 def get_luis(text):
-    headers = {
-        # Request headers
-        'Ocp-Apim-Subscription-Key': '83ca8ec7e88c4e7bbf45c063080b3b68',
-    }
-
-    params = {
-        # Query parameter
-        'q': text,
-        # Optional request parameters, set to default values
-        'timezoneOffset': '0',
-        'verbose': 'false',
-        'spellCheck': 'false',
-        'staging': 'false',
-    }
 
     try:
         r = requests.get(
-            "https://westus.api.cognitive.microsoft.com/luis/v2.0/apps/d85bc3b4-80a6-4c0d-8aae-79627ca915d4",
-            headers=headers, params=params)
+            "https://westus.api.cognitive.microsoft.com/luis/v2.0/apps/d85bc3b4-80a6-4c0d-8aae-79627ca915d4?verbose=true&timezoneOffset=-360&subscription-key=83ca8ec7e88c4e7bbf45c063080b3b68&q="+text)
         return r.json()
 
     except Exception as e:
