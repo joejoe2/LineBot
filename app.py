@@ -94,7 +94,7 @@ def get_luis(text):
         r = requests.get(
             "https://westus.api.cognitive.microsoft.com/luis/v2.0/apps/d85bc3b4-80a6-4c0d-8aae-79627ca915d4",
             headers=headers, params=params)
-        return json.dump(r.json())
+        return json.dumps(r.json())
 
     except Exception as e:
         return str(e)
