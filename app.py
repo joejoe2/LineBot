@@ -23,10 +23,6 @@ app = Flask(__name__)
 
 @app.route('/')
 def index():
-    d1 = datetime.datetime.now().astimezone(pytz.timezone("Asia/Taipei"))
-    d2 = datetime.datetime.now().astimezone(pytz.timezone("Asia/Tokyo"))
-    d3 = datetime.datetime.now().astimezone(pytz.timezone("America/Los_Angeles"))
-    # print(get_luis("2"))
     return "<p>Hello World!" + "<br>" + get_time(sep="<br>") + "</p>"
 
 
@@ -49,6 +45,14 @@ def callback():
         sys.stdout.flush()
         abort(400)
 
+    return 'OK'
+
+
+@app.route("/broadcast", methods=['GET'],)
+def broadcast():
+    body = request.args.get("data")
+    line_bot_api.broadcast(TextSendMessage(text="test broadcast push : "+str(body)))
+    # print(body)
     return 'OK'
 
 
@@ -94,7 +98,7 @@ def get_luis(text):
         r = requests.get(
             "https://westus.api.cognitive.microsoft.com/luis/v2.0/apps/d85bc3b4-80a6-4c0d-8aae-79627ca915d4",
             headers=headers, params=params)
-        return json.dumps(r.json(),)
+        return json.dumps(r.json())
 
     except Exception as e:
         return str(e)
