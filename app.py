@@ -1,4 +1,6 @@
 import json
+from json import JSONDecodeError
+import random
 import requests
 import sys
 import datetime
@@ -19,6 +21,13 @@ line_bot_api = LineBotApi(
 handler = WebhookHandler('905c2e3f57145acb7d791c46dec9a573')
 
 app = Flask(__name__)
+
+unknown_msg = ["我聽不懂", "請用更家具體的命令", "我不明白，請說清楚一點"]
+greet_msg = ["你好", "哈囉", "嗨~"]
+greet_morning_msg = ["早安", "早", "早上好"]
+greet_afternoon_msg = ["午安", "下午好"]
+greet_night_msg = ["晚安"]
+greet_bye_msg = ["再見", "掰掰", "下次見"]
 
 
 @app.route('/')
@@ -66,7 +75,16 @@ def handle_message(event: MessageEvent):
         line_bot_api.reply_message(event.reply_token,
                                    TextSendMessage(text=get_time("\n")))
     elif text.startswith("[with luis score]"):
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=get_luis(text.replace("[with luis score]", ""))))
+        send_text = get_luis(text.replace("[with luis score]", ""))
+        reply = ""
+        try:
+            obj = json.loads(send_text)
+            # print(obj["topScoringIntent"]["intent"], obj["topScoringIntent"]["score"])
+            reply = get_reply(obj["topScoringIntent"]["intent"], obj["topScoringIntent"]["score"])
+        except JSONDecodeError as ex:
+            print(ex.msg)
+
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=send_text+"\n"+reply))
     else:
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text=user_name + " say : " + text))
 
@@ -102,6 +120,25 @@ def get_luis(text):
 
     except Exception as e:
         return str(e)
+
+
+def get_reply(intent, score):
+    if score < 0.8:
+        return random.choice(unknown_msg)
+    elif intent == "greet":
+        return random.choice(greet_msg)
+    elif intent == "greet_morning":
+        return random.choice(greet_morning_msg)
+    elif intent == "greet_afternoon":
+        return random.choice(greet_afternoon_msg)
+    elif intent == "greet_night":
+        return random.choice(greet_night_msg)
+    elif intent == "greet_bye":
+        return random.choice(greet_bye_msg)
+    elif intent == "greet_time":
+        return random.choice(get_time())
+    else:  # intent None
+        return random.choice(unknown_msg)
 
 
 if __name__ == '__main__':
