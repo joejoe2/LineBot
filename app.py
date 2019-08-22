@@ -136,7 +136,7 @@ def get_reply(intent, score):
     elif intent == "greet_bye":
         return random.choice(greet_bye_msg)
     elif intent == "time":
-        return random.choice(get_time())
+        return get_time()
     else:  # intent None
         return random.choice(unknown_msg)
 
