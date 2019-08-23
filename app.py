@@ -89,7 +89,11 @@ def handle_message(event: MessageEvent):
 
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text=send_text+"\n"+reply))
     elif text.startswith("[my info]"):
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(text="id : " + user_id + "\n" + "name : " + user_name ))
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(text="id : " + user_id + "\n" + "name : " + user_name))
+    elif text.startswith("[followers]"):
+        t = text[text.find("{")+1:text.find("}")]
+        line_bot_api.reply_message(event.reply_token,
+                                   TextSendMessage(text=str(line_bot_api.get_insight_followers(t))))
     else:
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text=user_name + " say : " + text))
 
