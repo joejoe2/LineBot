@@ -22,7 +22,7 @@ handler = WebhookHandler('905c2e3f57145acb7d791c46dec9a573')
 
 app = Flask(__name__)
 
-unknown_msg = ["我聽不懂", "請用更家具體的命令", "我不明白，請說清楚一點"]
+unknown_msg = ["我聽不懂", "請用更具體的命令", "我不明白，請說清楚一點"]
 greet_msg = ["你好", "哈囉", "嗨~"]
 greet_morning_msg = ["早安", "早", "早上好"]
 greet_afternoon_msg = ["午安", "下午好"]
@@ -71,6 +71,9 @@ def handle_message(event: MessageEvent):
     user_id = event.source.user_id
     profile = line_bot_api.get_profile(user_id)
     user_name = profile.display_name
+    pic_url = profile.picture_url
+    status = profile.status_message
+
     if text.lower().startswith("[time]") or text.startswith("[時間]"):
         line_bot_api.reply_message(event.reply_token,
                                    TextSendMessage(text=get_time("\n")))
@@ -85,6 +88,8 @@ def handle_message(event: MessageEvent):
             print(ex.msg)
 
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text=send_text+"\n"+reply))
+    elif text.startswith("[my info]"):
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(text="id : " + user_id + "\n" + "name : " + user_name + "\n" + "pic_url : " + pic_url))
     else:
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text=user_name + " say : " + text))
 
