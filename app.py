@@ -57,7 +57,7 @@ def callback():
     return 'OK'
 
 
-@app.route("/broadcast", methods=['GET'],)
+@app.route("/broadcast", methods=['GET'])
 def broadcast():
     body = request.args.get("data")
     line_bot_api.broadcast(TextSendMessage(text="test broadcast push : "+str(body)))
@@ -65,10 +65,25 @@ def broadcast():
     return 'OK'
 
 
+@app.route("/push", methods=['GET'])
+def push():
+    uid = request.args.get("id")
+    body = request.args.get("data")
+
+    try:
+        line_bot_api.push_message(str(uid), TextSendMessage(text=str(body)))
+    except Exception as ex:
+        print(ex)
+        return str(ex)
+    
+    return 'OK'
+
+
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event: MessageEvent):
     text: str = event.message.text
     user_id = event.source.user_id
+    print(user_id)
     profile = line_bot_api.get_profile(user_id)
     user_name = profile.display_name
     pic_url = profile.picture_url

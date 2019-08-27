@@ -1,5 +1,6 @@
 #format [ins name]
-[time] ignore case =>get time
-[時間] 		   =>get time
-#format [ins name] ...content
-[with luis score] =>with luis scores
+[time] => get time (ignore case !)
+[時間] => get time
+[my info] => user info
+[followers]{time str} =>get bot data (ex. time str=20190801)
+[with luis score] ...content => with luis scores and reply
