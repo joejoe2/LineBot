@@ -16,8 +16,7 @@ from linebot.models import (
     MessageEvent, TextMessage, TextSendMessage,
 )
 
-line_bot_api = LineBotApi(
-    'uJ6LnR2TWpOmYqSYW9yg1nSe1GO9+c3euzndfcjTeTSlfz1r58dfBxpnNySHjq7/oUAmiO0VBDHb5HyLSdnu+PXMA71HJkbT4jwqfTDXhpXRAWOFsEVbpjbDNahvbXVLVh9cZsTLH+yB3cxwMsyC/gdB04t89/1O/w1cDnyilFU=')
+line_bot_api = LineBotApi('uJ6LnR2TWpOmYqSYW9yg1nSe1GO9+c3euzndfcjTeTSlfz1r58dfBxpnNySHjq7/oUAmiO0VBDHb5HyLSdnu+PXMA71HJkbT4jwqfTDXhpXRAWOFsEVbpjbDNahvbXVLVh9cZsTLH+yB3cxwMsyC/gdB04t89/1O/w1cDnyilFU=')
 handler = WebhookHandler('905c2e3f57145acb7d791c46dec9a573')
 
 app = Flask(__name__)
@@ -28,6 +27,9 @@ greet_morning_msg = ["早安", "早", "早上好"]
 greet_afternoon_msg = ["午安", "下午好"]
 greet_night_msg = ["晚安"]
 greet_bye_msg = ["再見", "掰掰", "下次見"]
+
+iotpath = "kkgmsmepoa54fd9rew2da/2n11td/"
+iotkey = "a43fdfvvpefd55"
 
 
 @app.route('/')
@@ -62,7 +64,7 @@ def broadcast():
     body = request.args.get("data")
     line_bot_api.broadcast(TextSendMessage(text="test broadcast push : "+str(body)))
     # print(body)
-    return 'OK'
+    return "broadcast data = " + body + " complete !"
 
 
 @app.route("/push", methods=['GET'])
@@ -75,8 +77,8 @@ def push():
     except Exception as ex:
         print(ex)
         return str(ex)
-    
-    return 'OK'
+
+    return 'push to id = ' + uid + " data = " + body + " complete !"
 
 
 @handler.add(MessageEvent, message=TextMessage)
@@ -97,7 +99,9 @@ def handle_message(event: MessageEvent):
         reply = ""
         try:
             obj = json.loads(send_text)
-            # print(obj["topScoringIntent"]["intent"], obj["topScoringIntent"]["score"])
+            # format example
+            # {"query": "\u65e9\u5348\u665a", "topScoringIntent":
+            # {"intent": "greet_morning", "score": 0.730086446}, "entities": []}
             reply = get_reply(obj["topScoringIntent"]["intent"], obj["topScoringIntent"]["score"])
         except JSONDecodeError as ex:
             print(ex.msg)
@@ -163,6 +167,17 @@ def get_reply(intent, score):
         return get_time()
     else:  # intent None
         return random.choice(unknown_msg)
+
+
+@app.route('/'+iotpath, methods=['POST'])
+def iotentry():
+    msg = request.args.get("msg")
+    key = request.args.get("k")
+    if key == iotkey:
+        line_bot_api.broadcast(TextSendMessage(text="iot test push : " + str(msg)))
+        return "iot broadcast " + msg + " complete !"
+    else:
+        return "access denied"
 
 
 if __name__ == '__main__':
