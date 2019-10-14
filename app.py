@@ -28,7 +28,7 @@ greet_afternoon_msg = ["午安", "下午好"]
 greet_night_msg = ["晚安"]
 greet_bye_msg = ["再見", "掰掰", "下次見"]
 
-iotpath = "kkgmsmepoa54fd9rew2da/2n11td/"
+iotpath = "kkgmsmepoa54fd9rew2da/2n11td"
 iotkey = "a43fdfvvpefd55"
 
 
@@ -169,7 +169,7 @@ def get_reply(intent, score):
         return random.choice(unknown_msg)
 
 
-@app.route('/'+iotpath, methods=['POST'])
+@app.route('/'+iotpath, methods=['GET', 'POST'])
 def iotentry():
     msg = request.args.get("msg")
     key = request.args.get("k")
