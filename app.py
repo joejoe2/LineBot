@@ -5,6 +5,7 @@ import requests
 import sys
 import datetime
 import pytz
+import gotcha
 from flask import Flask, request, abort
 from linebot import (
     LineBotApi, WebhookHandler
@@ -30,7 +31,9 @@ greet_bye_msg = ["再見", "掰掰", "下次見"]
 
 iotpath = "kkgmsmepoa54fd9rew2da/2n11td"
 iotkey = "a43fdfvvpefd55"
+base = "https://joejoe2.github.io/LineBot/"
 
+gotcha = gotcha.gotcha(base)
 
 @app.route('/')
 def index():
@@ -91,7 +94,27 @@ def handle_message(event: MessageEvent):
     pic_url = profile.picture_url
     status = profile.status_message
 
-    if text.lower().startswith("[time]") or text.startswith("[時間]"):
+    if text.lower().startswith("[gotcha]"):
+        if text.find("5star") >= 0:
+            pass
+        elif text.find("4star") >= 0:
+            pass
+        elif text.find("3star") >= 0:
+            pass
+        elif text.find("2star") >= 0:
+            pass
+        elif text.find("1star") >= 0:
+            pass
+        elif text.find("0star") >= 0:
+            pass
+        elif text.find("event") >= 0:
+            line_bot_api.reply_message(event.reply_token,
+                                       TextSendMessage(text=str(gotcha.enterevent())))
+            pass
+        else:
+            pass
+        pass
+    elif text.lower().startswith("[time]") or text.startswith("[時間]"):
         line_bot_api.reply_message(event.reply_token,
                                    TextSendMessage(text=get_time("\n")))
     elif text.startswith("[with luis score]"):
@@ -169,7 +192,7 @@ def get_reply(intent, score):
         return random.choice(unknown_msg)
 
 
-@app.route('/'+iotpath, methods=['GET', 'POST'])
+@app.route('/'+iotpath, methods=['POST'])
 def iotentry():
     msg = request.args.get("msg")
     key = request.args.get("k")
