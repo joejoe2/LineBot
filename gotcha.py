@@ -17,19 +17,19 @@ class gotcha:
         if p < default_prob[0]:
             r += "5★ "
             n = random.choice(os.listdir("img/star5"))
-            r += n
-            l += "img/star5/"+n
+            r += n.strip(".png")
+            l += "img/star5/" + urllib.parse.quote(n)
             pass
         elif p < default_prob[1]:
             r += "4★ "
             n = random.choice(os.listdir("img/star4"))
-            r += n
-            l += "img/star4/" + n
+            r += n.strip(".png")
+            l += "img/star4/" + urllib.parse.quote(n)
             pass
         elif p < default_prob[2]:
             r += "3★ "
             n = random.choice(os.listdir("img/star3"))
-            r += n
+            r += n.strip(".png")
             l += "img/star3/" + urllib.parse.quote(n)
             pass
         return l, r
@@ -57,8 +57,8 @@ class gotcha:
         r = "in event mode\nyou get "
         l = self.base
         r += "event servant "
-        n = random.choice(os.listdir("img/event"))
-        r += n
+        n: str = random.choice(os.listdir("img/event"))
+        r += n.strip(".jpg")
         l += "img/event/" + urllib.parse.quote(n)
         return l, r
         pass

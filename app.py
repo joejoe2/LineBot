@@ -113,6 +113,9 @@ def handle_message(event: MessageEvent):
             line_bot_api.reply_message(event.reply_token, [TextSendMessage(text=r[1]),ImageSendMessage(r[0],r[0])])
             pass
         else:
+            r = gotcha.enterdefault()
+            print(r)
+            line_bot_api.reply_message(event.reply_token, [TextSendMessage(text=r[1]), ImageSendMessage(r[0], r[0])])
             pass
         pass
     elif text.lower().startswith("[time]") or text.startswith("[時間]"):
