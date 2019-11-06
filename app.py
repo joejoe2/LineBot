@@ -115,7 +115,7 @@ def handle_message(event: MessageEvent):
                 "previewImageUrl": str(r[0])
             }
             line_bot_api.reply_message(event.reply_token,
-                                       [TextSendMessage(text=r[1]), message])
+                                       (TextSendMessage(text=r[1]), message))
             pass
         else:
             pass
