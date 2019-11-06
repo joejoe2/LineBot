@@ -59,7 +59,6 @@ class gotcha:
         n = random.choice(os.listdir("img/event"))
         r += n
         l += "img/event/" + n
-        pass
         return l, r
         pass
 
