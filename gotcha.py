@@ -30,7 +30,7 @@ class gotcha:
             r += "3★ "
             n = random.choice(os.listdir("img/star3"))
             r += n
-            l += "img/star3/" + n
+            l += "img/star3/" + urllib.parse.quote(n)
             pass
         return l, r
         pass
@@ -59,8 +59,8 @@ class gotcha:
         r += "event servant "
         n = random.choice(os.listdir("img/event"))
         r += n
-        l += "img/event/" + n
-        return urllib.parse.quote(l), r
+        l += "img/event/" + urllib.parse.quote(n)
+        return l, r
         pass
 
     pass
