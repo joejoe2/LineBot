@@ -14,7 +14,7 @@ from linebot.exceptions import (
     InvalidSignatureError
 )
 from linebot.models import (
-    MessageEvent, TextMessage, TextSendMessage,
+    MessageEvent, TextMessage, TextSendMessage,ImageSendMessage
 )
 
 line_bot_api = LineBotApi('uJ6LnR2TWpOmYqSYW9yg1nSe1GO9+c3euzndfcjTeTSlfz1r58dfBxpnNySHjq7/oUAmiO0VBDHb5HyLSdnu+PXMA71HJkbT4jwqfTDXhpXRAWOFsEVbpjbDNahvbXVLVh9cZsTLH+yB3cxwMsyC/gdB04t89/1O/w1cDnyilFU=')
@@ -108,19 +108,8 @@ def handle_message(event: MessageEvent):
         elif text.find("0star") >= 0:
             pass
         elif text.find("event") >= 0:
-            r = gotcha.enterevent();
-            messages = {
-                {
-                "type": "image",
-                "originalContentUrl": str(r[0]),
-                "previewImageUrl": str(r[0])
-                },
-                {
-                    "type": "text",
-                    "text": r[1]
-                }
-            }
-            line_bot_api.reply_message(event.reply_token,messages)
+            r = gotcha.enterevent()
+            line_bot_api.reply_message(event.reply_token, [TextSendMessage(text=r[1]), ImageSendMessage(r[0])])
             pass
         else:
             pass
