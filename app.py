@@ -110,7 +110,7 @@ def handle_message(event: MessageEvent):
         elif text.find("event") >= 0:
             r = gotcha.enterevent()
             print(r)
-            line_bot_api.reply_message(event.reply_token, [TextSendMessage(text=r[1]), ImageSendMessage(str(r[0]).encode("url"), str(r[0]).encode("url"))])
+            line_bot_api.reply_message(event.reply_token, [TextSendMessage(text=r[1]), ImageSendMessage(str(r[0]).replace(old=" ", new="%20"), str(r[0]).replace(old=" ", new="%20"))])
             pass
         else:
             pass
