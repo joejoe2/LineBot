@@ -1,5 +1,6 @@
 import random
 import os
+import urllib.parse
 
 default_prob = [0.05, 0.20, 1.0]
 dirname = os.path.dirname(__file__)
@@ -59,11 +60,11 @@ class gotcha:
         n = random.choice(os.listdir("img/event"))
         r += n
         l += "img/event/" + n
-        return l.replace(" ","%20"), r
+        return urllib.parse.quote(l), r
         pass
 
     pass
 """
 g = gotcha("https://joejoe2.github.io/LineBot/")
 print(g.enterdefault())
-print(g.enterevent()[0])"""
+print(g.enterevent())"""
