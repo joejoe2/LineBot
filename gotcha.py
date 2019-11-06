@@ -59,11 +59,11 @@ class gotcha:
         n = random.choice(os.listdir("img/event"))
         r += n
         l += "img/event/" + n
-        return l, r
+        return l.replace(" ","%20"), r
         pass
 
     pass
 """
 g = gotcha("https://joejoe2.github.io/LineBot/")
 print(g.enterdefault())
-print(g.enterevent())"""
+print(g.enterevent()[0])"""
