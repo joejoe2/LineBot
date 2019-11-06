@@ -108,8 +108,14 @@ def handle_message(event: MessageEvent):
         elif text.find("0star") >= 0:
             pass
         elif text.find("event") >= 0:
+            r = gotcha.enterevent();
+            message = {
+                "type": "image",
+                "originalContentUrl": str(r[0]),
+                "previewImageUrl": str(r[0])
+            }
             line_bot_api.reply_message(event.reply_token,
-                                       TextSendMessage(text=str(gotcha.enterevent())))
+                                       [TextSendMessage(text=r[1]), message])
             pass
         else:
             pass
