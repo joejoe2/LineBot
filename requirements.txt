@@ -3,4 +3,3 @@ line-bot-sdk
 gunicorn
 pytz
 requests
-urllib
