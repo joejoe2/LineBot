@@ -32,8 +32,8 @@ greet_bye_msg = ["再見", "掰掰", "下次見"]
 iotpath = "kkgmsmepoa54fd9rew2da/2n11td"
 iotkey = "a43fdfvvpefd55"
 base = "https://joejoe2.github.io/LineBot/"
-
 gotcha = gotcha.gotcha(base)
+
 
 @app.route('/')
 def index():
@@ -42,6 +42,9 @@ def index():
 
 @app.route("/callback", methods=['POST'])
 def callback():
+    """
+    bot webhook endpoint
+    """
     # get X-Line-Signature header value
     signature = request.headers['X-Line-Signature']
 
@@ -64,6 +67,10 @@ def callback():
 
 @app.route("/broadcast", methods=['GET'])
 def broadcast():
+    """
+        broadcast msg endpoint
+        ,receive by get     /broadcast?data=
+    """
     body = request.args.get("data")
     line_bot_api.broadcast(TextSendMessage(text="test broadcast push : "+str(body)))
     # print(body)
@@ -72,6 +79,9 @@ def broadcast():
 
 @app.route("/push", methods=['GET'])
 def push():
+    """
+            push msg endpoint to a specific user
+            ,receive by get     /push?id=...&data=...        """
     uid = request.args.get("id")
     body = request.args.get("data")
 
@@ -86,6 +96,9 @@ def push():
 
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event: MessageEvent):
+    """
+        handle different kinds of input or cmd
+    """
     text: str = event.message.text
     user_id = event.source.user_id
     print(user_id)
@@ -94,34 +107,34 @@ def handle_message(event: MessageEvent):
     pic_url = profile.picture_url
     status = profile.status_message
 
-    if text.lower().startswith("[gotcha]"):
-        if text.find("5star") >= 0:
+    if text.lower().startswith("[gotcha]"):  # cmd gotcha
+        if text.find("star5") >= 0:  # 5* only state
             pass
-        elif text.find("4star") >= 0:
+        elif text.find("star4") >= 0:  # 4* only state
             pass
-        elif text.find("3star") >= 0:
+        elif text.find("star3") >= 0:  # 3* only state
             pass
-        elif text.find("2star") >= 0:
+        elif text.find("star2") >= 0:  # 2* only state
             pass
-        elif text.find("1star") >= 0:
+        elif text.find("star1") >= 0:  # 1* only state
             pass
-        elif text.find("0star") >= 0:
+        elif text.find("star0") >= 0:  # 0* only state
             pass
-        elif text.find("event") >= 0:
+        elif text.find("event") >= 0:  # event only state
             r = gotcha.enterevent()
-            print(r)
-            line_bot_api.reply_message(event.reply_token, [TextSendMessage(text=r[1]),ImageSendMessage(r[0],r[0])])
+            line_bot_api.reply_message(event.reply_token, [TextSendMessage(text=r[1]), ImageSendMessage(r[0], r[0])])
             pass
-        else:
-            r = gotcha.enterdefault()
-            print(r)
+        elif text.find("show"):  # show statistic
+            line_bot_api.reply_message(event.reply_token, TextSendMessage(text=gotcha.show()))
+            pass
+        else:  # default state
+            r = gotcha.enter()
             line_bot_api.reply_message(event.reply_token, [TextSendMessage(text=r[1]), ImageSendMessage(r[0], r[0])])
             pass
         pass
-    elif text.lower().startswith("[time]") or text.startswith("[時間]"):
-        line_bot_api.reply_message(event.reply_token,
-                                   TextSendMessage(text=get_time("\n")))
-    elif text.startswith("[with luis score]"):
+    elif text.lower().startswith("[time]") or text.startswith("[時間]"):  # cmd time
+        line_bot_api.reply_message(event.reply_token,TextSendMessage(text=get_time("\n")))
+    elif text.startswith("[with luis score]"):  # cmd luis
         send_text = get_luis(text.replace("[with luis score]", ""))
         reply = ""
         try:
@@ -129,22 +142,28 @@ def handle_message(event: MessageEvent):
             # format example
             # {"query": "\u65e9\u5348\u665a", "topScoringIntent":
             # {"intent": "greet_morning", "score": 0.730086446}, "entities": []}
+            # reply is based on luis intent and score
             reply = get_reply(obj["topScoringIntent"]["intent"], obj["topScoringIntent"]["score"])
         except JSONDecodeError as ex:
             print(ex.msg)
 
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text=send_text+"\n"+reply))
-    elif text.startswith("[my info]"):
+    elif text.startswith("[my info]"):  # cmd to check user's info
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text="id : " + user_id + "\n" + "name : " + user_name))
-    elif text.startswith("[followers]"):
+    elif text.startswith("[followers]"):  # cmd to show bot's followers num
         t = text[text.find("{")+1:text.find("}")]
-        line_bot_api.reply_message(event.reply_token,
-                                   TextSendMessage(text=str(line_bot_api.get_insight_followers(t))))
-    else:
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=str(line_bot_api.get_insight_followers(t))))
+    else:  # if input does not belongs to anyone above, just say same back
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text=user_name + " say : " + text))
 
 
 def get_time(sep="\n"):
+    """
+    get time in some useful timezone to me
+
+    :param sep:  separator
+    :return:  time in string
+    """
     d1 = datetime.datetime.now().astimezone(pytz.timezone("Asia/Taipei"))
     d2 = datetime.datetime.now().astimezone(pytz.timezone("Asia/Tokyo"))
     d3 = datetime.datetime.now().astimezone(pytz.timezone("America/Los_Angeles"))
@@ -152,6 +171,12 @@ def get_time(sep="\n"):
 
 
 def get_luis(text):
+    """
+    query input text into some simple intent class(ex time, greeting ...) and make a reply based on azure luis service
+
+    :param text: query string
+    :return: json with intent and score
+    """
     headers = {
         # Request headers
         'Ocp-Apim-Subscription-Key': '6ac4b71081b84e3db81f589f774e956c',
@@ -178,6 +203,13 @@ def get_luis(text):
 
 
 def get_reply(intent, score):
+    """
+    based on intent and score, choose a different reply
+
+    :param intent:string
+    :param score:flaot
+    :return reply:string
+    """
     if score < 0.8:
         return random.choice(unknown_msg)
     elif intent == "greet":
@@ -198,6 +230,11 @@ def get_reply(intent, score):
 
 @app.route('/'+iotpath, methods=['POST'])
 def iotentry():
+    """
+    for status push broadcast test
+
+    :return: push broadcast result
+    """
     msg = request.args.get("msg")
     key = request.args.get("k")
     if key == iotkey:
@@ -207,5 +244,5 @@ def iotentry():
         return "access denied"
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # run app
     app.run()
