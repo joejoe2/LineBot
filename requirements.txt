@@ -3,5 +3,5 @@ line-bot-sdk
 gunicorn
 pytz
 requests
-pygraphviz==1.5
 transitions
+pygraphviz
