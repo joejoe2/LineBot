@@ -1,5 +1,4 @@
-:repo:universe
-:repo:deb http://free.nchc.org.tw/ubuntu bionic/universe Release
+:repo:deb http://cz.archive.ubuntu.com/ubuntu artful main universe
 graphviz
 libgraphviz-dev
 pkg-config
