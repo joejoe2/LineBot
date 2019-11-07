@@ -1,3 +1,4 @@
+:repo:deb http://free.nchc.org.tw/ubuntu bionic InRelease universe
 graphviz
 libgraphviz-dev
 pkg-config
