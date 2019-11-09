@@ -7,6 +7,7 @@ import datetime
 import pytz
 import gotcha
 from flask import Flask, request, abort
+import os
 from linebot import (
     LineBotApi, WebhookHandler
 )
@@ -21,6 +22,7 @@ line_bot_api = LineBotApi('uJ6LnR2TWpOmYqSYW9yg1nSe1GO9+c3euzndfcjTeTSlfz1r58dfB
 handler = WebhookHandler('905c2e3f57145acb7d791c46dec9a573')
 
 app = Flask(__name__)
+port = int(os.environ.get("PORT", 5000))
 
 unknown_msg = ["我聽不懂", "請用更具體的命令", "我不明白，請說清楚一點"]
 greet_msg = ["你好", "哈囉", "嗨~"]
@@ -114,21 +116,20 @@ def handle_message(event: MessageEvent):
             pass
         elif text.find("star3") >= 0:  # 3* only state
             pass
-        elif text.find("star2") >= 0:  # 2* only state
-            pass
-        elif text.find("star1") >= 0:  # 1* only state
-            pass
-        elif text.find("star0") >= 0:  # 0* only state
+        elif text.find("10"):
+            res = gotcha.pick10()
+            for r in res:
+                line_bot_api.push_message(str(user_id), [TextSendMessage(text=r[1]), ImageSendMessage(r[0], r[0])])
             pass
         elif text.find("event") >= 0:  # event only state
             r = gotcha.enterevent()
             line_bot_api.reply_message(event.reply_token, [TextSendMessage(text=r[1]), ImageSendMessage(r[0], r[0])])
             pass
-        elif text.find("show"):  # show statistic
+        elif text.find("show") >= 0:  # show statistic
             line_bot_api.reply_message(event.reply_token, TextSendMessage(text=gotcha.show()))
             pass
         else:  # default state
-            r = gotcha.enter()
+            r = gotcha.enterdefault()
             line_bot_api.reply_message(event.reply_token, [TextSendMessage(text=r[1]), ImageSendMessage(r[0], r[0])])
             pass
         pass
@@ -245,4 +246,4 @@ def iotentry():
 
 
 if __name__ == '__main__':  # run app
-    app.run()
+    app.run(debug=True,host='0.0.0.0',port=port)
