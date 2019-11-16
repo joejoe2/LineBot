@@ -15,7 +15,7 @@ class gotcha(object):
         # The states argument defines the name of states
         states = ["ini", "default", "event", "star3", "star4", "star5", "state10"]
         # The trigger argument defines the name of the new triggering method
-        transitions = [
+        transitions1 = [
             {"trigger": 'd', 'source': 'ini', 'dest': 'default'},
             {'trigger': 's3', 'source': 'ini', 'dest': 'star3'},
             {'trigger': 's4', 'source': 'ini', 'dest': 'star4'},
@@ -23,8 +23,19 @@ class gotcha(object):
             {'trigger': 'eve', 'source': 'ini', 'dest': 'event'},
             {'trigger': 'to10', 'source': 'ini', 'dest': 'state10'},
             {'trigger': 'b', 'source': ["default", "event", "star3", "star4", "star5", "state10"], 'dest': 'ini'}]
-        self.machine = GraphMachine(model=self, states=states, transitions=transitions, initial="ini")
-        self.get_graph().draw("fsm.png", prog="dot")
+        self.machine = GraphMachine(model=self, states=states, transitions=transitions1, initial="ini")
+
+        states2 = ["africa", "normal", "europe"]
+        transitions2 = [
+            {"trigger": 'n_to_e', 'source': 'normal', 'dest': 'europe'},
+            {"trigger": 'e_to_n', 'source': 'europe', 'dest': 'normal'},
+            {"trigger": 'n_to_a', 'source': 'normal', 'dest': 'africa'},
+            {"trigger": 'a_to_n', 'source': 'africa', 'dest': 'normal'}
+        ]
+        self.submachine = GraphMachine(states=states2, transitions=transitions2, initial="normal")
+
+        self.get_graph().draw("fsm1.png", prog="dot")
+        self.submachine.get_graph().draw("fsm2.png", prog="dot")
         self.base = base
         self.total = 0
         self.total3 = 0
@@ -32,12 +43,47 @@ class gotcha(object):
         self.total5 = 0
         pass
 
+    def test(self):
+        t = self.total
+        s3r = self.total3/t
+        s4r = self.total4/t
+        s5r = self.total5/t
+        print('from '+self.submachine.state, end=" ")
+        if 0.7 < s3r < 0.85:
+            if self.submachine.state == 'europe':
+                self.submachine.e_to_n()
+                pass
+            elif self.submachine.state == 'africa':
+                self.submachine.a_to_n()
+                pass
+            pass
+        elif s3r <= 0.7 or s5r >= 0.07 or s4r >= 0.18:
+            if self.submachine.state == 'normal':
+                self.submachine.n_to_e()
+                pass
+            elif self.submachine.state == 'africa':
+                self.submachine.a_to_n()
+                self.submachine.n_to_e()
+                pass
+            pass
+        else:
+            if self.submachine.state == 'normal':
+                self.submachine.n_to_a()
+                pass
+            elif self.submachine.state == 'europe':
+                self.submachine.e_to_n()
+                self.submachine.n_to_a()
+                pass
+            pass
+        print('to ' + self.submachine.state)
+        pass
+
     def show(self):
         if self.total == 0:
             return "total: 0"
         else:
-            return "total: " + str(self.total) + "  5★=" + str(self.total5 / self.total*100) + "%" + "  4★=" + \
-                   str(self.total4 / self.total*100) + "%" + "  3★=" + str(self.total3 / self.total*100) + "%"
+            return "total: " + str(self.total) + "\n5★=" + str(self.total5 / self.total*100) + "%" + "\n4★=" + \
+                   str(self.total4 / self.total*100) + "%" + "\n3★=" + str(self.total3 / self.total*100) + "%"
         pass
 
     def enterdefault(self):
@@ -98,6 +144,7 @@ class gotcha(object):
             t = True
             pass
         self.total += 1
+        self.test()
         return l, r, t
         pass
 
@@ -150,6 +197,7 @@ class gotcha(object):
             l += "craft/star3/" + urllib.parse.quote(n)
         self.b()
         print(self.state)
+        self.test()
         return l, r
         pass
 
@@ -171,6 +219,7 @@ class gotcha(object):
             l += "craft/star4/" + urllib.parse.quote(n)
         self.b()
         print(self.state)
+        self.test()
         return l, r
         pass
 
@@ -192,6 +241,7 @@ class gotcha(object):
             l += "craft/star5/" + urllib.parse.quote(n)
         self.b()
         print(self.state)
+        self.test()
         return l, r
         pass
 
@@ -213,4 +263,5 @@ class gotcha(object):
 
 if __name__ == '__main__':
     g = gotcha("")
-    print(g.pick10())
+    for i in range(0, 10):
+        print(g.pick10())

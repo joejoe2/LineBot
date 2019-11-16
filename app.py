@@ -6,7 +6,7 @@ import sys
 import datetime
 import pytz
 import gotcha
-from flask import Flask, request, abort
+from flask import Flask, request, abort, send_from_directory
 import os
 from linebot import (
     LineBotApi, WebhookHandler
@@ -18,12 +18,15 @@ from linebot.models import (
     MessageEvent, TextMessage, TextSendMessage,ImageSendMessage
 )
 
+# const key
 line_bot_api = LineBotApi('uJ6LnR2TWpOmYqSYW9yg1nSe1GO9+c3euzndfcjTeTSlfz1r58dfBxpnNySHjq7/oUAmiO0VBDHb5HyLSdnu+PXMA71HJkbT4jwqfTDXhpXRAWOFsEVbpjbDNahvbXVLVh9cZsTLH+yB3cxwMsyC/gdB04t89/1O/w1cDnyilFU=')
 handler = WebhookHandler('905c2e3f57145acb7d791c46dec9a573')
+iotpath = "kkgmsmepoa54fd9rew2da/2n11td"
+iotkey = "a43fdfvvpefd55"
+base = "https://joejoe2.github.io/LineBot/"
+gotcha = gotcha.gotcha(base)
 
-app = Flask(__name__)
-port = int(os.environ.get("PORT", 5000))
-
+# const reply
 unknown_msg = ["我聽不懂", "請用更具體的命令", "我不明白，請說清楚一點"]
 greet_msg = ["你好", "哈囉", "嗨~"]
 greet_morning_msg = ["早安", "早", "早上好"]
@@ -31,10 +34,9 @@ greet_afternoon_msg = ["午安", "下午好"]
 greet_night_msg = ["晚安"]
 greet_bye_msg = ["再見", "掰掰", "下次見"]
 
-iotpath = "kkgmsmepoa54fd9rew2da/2n11td"
-iotkey = "a43fdfvvpefd55"
-base = "https://joejoe2.github.io/LineBot/"
-gotcha = gotcha.gotcha(base)
+# setup flask
+app = Flask(__name__)
+port = int(os.environ.get("PORT", 5000))
 
 
 @app.route('/')
@@ -116,7 +118,7 @@ def handle_message(event: MessageEvent):
             pass
         elif text.find("star3") >= 0:  # 3* only state
             pass
-        elif text.find("10"):
+        elif text.find("10") >= 0:  # state10 (pick 10*default sate)
             res = gotcha.pick10()
             for r in res:
                 line_bot_api.push_message(str(user_id), [TextSendMessage(text=r[1]), ImageSendMessage(r[0], r[0])])
@@ -232,7 +234,7 @@ def get_reply(intent, score):
 @app.route('/'+iotpath, methods=['POST'])
 def iotentry():
     """
-    for status push broadcast test
+    for iot status push broadcast test
 
     :return: push broadcast result
     """
@@ -245,5 +247,16 @@ def iotentry():
         return "access denied"
 
 
+@app.route('/getfsm', methods=['GET'])
+def getfsm():
+    f = request.args.get("f")
+    f = "fsm2.png" if f == '2' else "fsm1.png"
+    try:
+        return send_from_directory('', f, as_attachment=True, attachment_filename=f)
+    except Exception as e:
+        return str(e)
+    pass
+
+
 if __name__ == '__main__':  # run app
-    app.run(debug=True,host='0.0.0.0',port=port)
+    app.run(debug=True, host='0.0.0.0', port=port)
