@@ -12,6 +12,6 @@ ENV LC_ALL C.UTF-8
 
 EXPOSE 5000
 
-ENTRYPOINT ["python3"]
+ENTRYPOINT ["gunicorn"]
 
-CMD ["app.py"]
+CMD ["app:app","-w","1","--threads","1"]

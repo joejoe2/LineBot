@@ -41,15 +41,19 @@ class gotcha(object):
         self.total3 = 0
         self.total4 = 0
         self.total5 = 0
+        self.st4 = 0
+        self.st5 = 0
         pass
 
     def test(self):
         t = self.total
-        s3r = self.total3/t
-        s4r = self.total4/t
-        s5r = self.total5/t
-        print('from '+self.submachine.state, end=" ")
-        if 0.7 < s3r < 0.85:
+        s3r = self.total3 / t
+        s4r = self.total4 / t
+        s5r = self.total5 / t
+        st4r = self.st4 / t
+        st5r = self.st5 / t
+        print('from ' + self.submachine.state, end=" ")
+        if 0.7 < s3r < 0.85 and s5r < 0.07 and s4r < 0.18 and st4r < 0.05 and st5r < 0.03:  # to normal
             if self.submachine.state == 'europe':
                 self.submachine.e_to_n()
                 pass
@@ -57,7 +61,7 @@ class gotcha(object):
                 self.submachine.a_to_n()
                 pass
             pass
-        elif s3r <= 0.7 or s5r >= 0.07 or s4r >= 0.18:
+        elif s3r <= 0.7 or s5r >= 0.07 or s4r >= 0.18 or st4r >= 0.05 or st5r >= 0.03:  # to europe
             if self.submachine.state == 'normal':
                 self.submachine.n_to_e()
                 pass
@@ -66,7 +70,7 @@ class gotcha(object):
                 self.submachine.n_to_e()
                 pass
             pass
-        else:
+        else:  # to africa
             if self.submachine.state == 'normal':
                 self.submachine.n_to_a()
                 pass
@@ -80,10 +84,25 @@ class gotcha(object):
 
     def show(self):
         if self.total == 0:
-            return "total: 0"
+            return "no data now\nplease type [gotcha] or [gotcha]10 first !"
         else:
-            return "total: " + str(self.total) + "\n5★=" + str(self.total5 / self.total*100) + "%" + "\n4★=" + \
-                   str(self.total4 / self.total*100) + "%" + "\n3★=" + str(self.total3 / self.total*100) + "%"
+            return "global gotcha machine's luck is in state:\n\n" + str(
+                self.submachine.state) + "\n\n" + "total: " + str(self.total) + \
+                   "\n5★=" + str(self.total5 / self.total * 100) + "%" + "\n4★=" + \
+                   str(self.total4 / self.total * 100) + "%" + "\n3★=" + str(self.total3 / self.total * 100) + "%" + \
+                   "\n\n" + self.get_msg()
+        pass
+
+    def get_msg(self):
+        if self.submachine.state == 'africa':
+            return random.choice(["加油好嗎...", "87%的三星", "非酋抽卡機在此"])
+            pass
+        elif self.submachine.state == 'europe':
+            return random.choice(["我討厭歐洲人 !", "不錯喔 !", "快去消業障吧 !"])
+            pass
+        else:
+            return random.choice(["別懷疑...標準機率", "普普通通吧"])
+            pass
         pass
 
     def enterdefault(self):
@@ -105,6 +124,7 @@ class gotcha(object):
             r += n.strip(".png")
             l += "img/star5/" + urllib.parse.quote(n)
             self.total5 += 1
+            self.st5 += 1
             pass
         elif p < default_prob[1]:
             r += "5★ craft "
@@ -119,6 +139,7 @@ class gotcha(object):
             r += n.strip(".png")
             l += "img/star4/" + urllib.parse.quote(n)
             self.total4 += 1
+            self.st4 += 1
             pass
         elif p < default_prob[3]:
             r += "4★ craft "
@@ -160,7 +181,7 @@ class gotcha(object):
             pass
         if t == True:
             print("need replace")
-            index = int(random.random()*10)
+            index = int(random.random() * 10)
             r = "in default mode\nyou get "
             l = self.base
             r += "4★ craft "
@@ -258,6 +279,7 @@ class gotcha(object):
         print(self.state)
         return l, r
         pass
+
     pass
 
 
