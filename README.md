@@ -12,7 +12,7 @@ remove [...] and fill your content
 
 
 depoly by heroku :
-
+------------------
 --------------------------------------------------------
 heroku container:push web --app joejoe2bot
 
@@ -21,6 +21,8 @@ heroku container:release web --app joejoe2bot
 --------------------------------------------------------
 
 deploy by aws elasticbeanstalk :
-
+--------------------------------
 --------------------------------------------------------
 upload Dockerrun.aws.json
+
+and configure load balancer's port mapping and https
