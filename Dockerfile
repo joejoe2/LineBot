@@ -10,8 +10,6 @@ RUN pip3 install -r requirements.txt
 
 ENV LC_ALL C.UTF-8
 
-EXPOSE 5000
-
 ENTRYPOINT ["gunicorn"]
 
 CMD ["app:app","-w","1","--threads","1"]

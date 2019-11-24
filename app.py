@@ -24,7 +24,8 @@ handler = WebhookHandler('905c2e3f57145acb7d791c46dec9a573')
 iotpath = "kkgmsmepoa54fd9rew2da/2n11td"
 iotkey = "a43fdfvvpefd55"
 base = "https://joejoe2.github.io/LineBot/"
-gotcha = gotcha.gotcha(base)
+
+gotcha_list = []
 
 # const reply
 unknown_msg = ["我聽不懂", "請用更具體的命令", "我不明白，請說清楚一點"]
@@ -112,33 +113,51 @@ def handle_message(event: MessageEvent):
     status = profile.status_message
 
     if text.lower().startswith("[gotcha]"):  # cmd gotcha
+        # each user has a gotcha machine
+        gotcha_m = None
+        for g in gotcha_list:
+            if g.id == user_id:
+                gotcha_m = g
+                break
+            pass
+        if gotcha_m == None:
+            gotcha_m = gotcha.gotcha(user_id, base)
+            gotcha_list.append(gotcha_m)
+            pass
+
         if text.find("star5") >= 0:  # 5* only state
+            r = gotcha_m.enters5()
+            line_bot_api.reply_message(event.reply_token, [TextSendMessage(text=r[1]), ImageSendMessage(r[0], r[0])])
             pass
         elif text.find("star4") >= 0:  # 4* only state
+            r = gotcha_m.enters4()
+            line_bot_api.reply_message(event.reply_token, [TextSendMessage(text=r[1]), ImageSendMessage(r[0], r[0])])
             pass
         elif text.find("star3") >= 0:  # 3* only state
+            r = gotcha_m.enters3()
+            line_bot_api.reply_message(event.reply_token, [TextSendMessage(text=r[1]), ImageSendMessage(r[0], r[0])])
             pass
         elif text.find("10") >= 0:  # state10 (pick 10*default sate)
-            res = gotcha.pick10()
+            res = gotcha_m.pick10()
             for r in res:
                 line_bot_api.push_message(str(user_id), [TextSendMessage(text=r[1]), ImageSendMessage(r[0], r[0])])
             pass
         elif text.find("event") >= 0:  # event only state
-            r = gotcha.enterevent()
+            r = gotcha_m.enterevent()
             line_bot_api.reply_message(event.reply_token, [TextSendMessage(text=r[1]), ImageSendMessage(r[0], r[0])])
             pass
         elif text.find("show") >= 0:  # show statistic
-            line_bot_api.reply_message(event.reply_token, TextSendMessage(text=gotcha.show()))
+            line_bot_api.reply_message(event.reply_token, TextSendMessage(text=gotcha_m.show()))
             pass
         else:  # default state
-            r = gotcha.enterdefault()
+            r = gotcha_m.enterdefault()
             line_bot_api.reply_message(event.reply_token, [TextSendMessage(text=r[1]), ImageSendMessage(r[0], r[0])])
             pass
         pass
     elif text.lower().startswith("[time]") or text.startswith("[時間]"):  # cmd time
         line_bot_api.reply_message(event.reply_token,TextSendMessage(text=get_time("\n")))
-    elif text.startswith("[with luis score]"):  # cmd luis
-        send_text = get_luis(text.replace("[with luis score]", ""))
+    elif text.startswith("[luis]"):  # cmd luis
+        send_text = get_luis(text.replace("[luis]", ""))
         reply = ""
         try:
             obj = json.loads(send_text)
@@ -259,4 +278,4 @@ def getfsm():
 
 
 if __name__ == '__main__':  # run app
-    pass
+    app.run(host="0.0.0.0", port=port, debug=True)

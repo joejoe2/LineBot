@@ -11,7 +11,7 @@ dirname = os.path.dirname(__file__)
 
 
 class gotcha(object):
-    def __init__(self, base):
+    def __init__(self, id, base):
         # The states argument defines the name of states
         states = ["ini", "default", "event", "star3", "star4", "star5", "state10"]
         # The trigger argument defines the name of the new triggering method
@@ -36,6 +36,8 @@ class gotcha(object):
 
         self.get_graph().draw("fsm1.png", prog="dot")
         self.submachine.get_graph().draw("fsm2.png", prog="dot")
+
+        self.id = id
         self.base = base
         self.total = 0
         self.total3 = 0
@@ -86,7 +88,7 @@ class gotcha(object):
         if self.total == 0:
             return "no data now\nplease type [gotcha] or [gotcha]10 first !"
         else:
-            return "global gotcha machine's luck is in state:\n\n" + str(
+            return str(self.id)+" gotcha machine's luck is in state:\n\n" + str(
                 self.submachine.state) + "\n\n" + "total: " + str(self.total) + \
                    "\n5★=" + str(self.total5 / self.total * 100) + "%" + "\n4★=" + \
                    str(self.total4 / self.total * 100) + "%" + "\n3★=" + str(self.total3 / self.total * 100) + "%" + \
@@ -218,7 +220,6 @@ class gotcha(object):
             l += "craft/star3/" + urllib.parse.quote(n)
         self.b()
         print(self.state)
-        self.test()
         return l, r
         pass
 
@@ -240,7 +241,6 @@ class gotcha(object):
             l += "craft/star4/" + urllib.parse.quote(n)
         self.b()
         print(self.state)
-        self.test()
         return l, r
         pass
 
@@ -262,7 +262,6 @@ class gotcha(object):
             l += "craft/star5/" + urllib.parse.quote(n)
         self.b()
         print(self.state)
-        self.test()
         return l, r
         pass
 
