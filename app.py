@@ -15,7 +15,7 @@ from linebot.exceptions import (
     InvalidSignatureError
 )
 from linebot.models import (
-    MessageEvent, TextMessage, TextSendMessage,ImageSendMessage
+    MessageEvent, TextMessage, TextSendMessage, ImageSendMessage, FileMessage
 )
 
 # const key
@@ -149,13 +149,16 @@ def handle_message(event: MessageEvent):
         elif text.find("show") >= 0:  # show statistic
             line_bot_api.reply_message(event.reply_token, TextSendMessage(text=gotcha_m.show()))
             pass
+        elif text.find("fsm") >= 0:  # show fsm
+            line_bot_api.reply_message(event.reply_token, [ImageSendMessage(base+"fsm1.png", base+"fsm1.png"), ImageSendMessage(base+"fsm2.png", base+"fsm2.png")])
+            pass
         else:  # default state
             r = gotcha_m.enterdefault()
             line_bot_api.reply_message(event.reply_token, [TextSendMessage(text=r[1]), ImageSendMessage(r[0], r[0])])
             pass
         pass
     elif text.lower().startswith("[time]") or text.startswith("[時間]"):  # cmd time
-        line_bot_api.reply_message(event.reply_token,TextSendMessage(text=get_time("\n")))
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=get_time("\n")))
     elif text.startswith("[luis]"):  # cmd luis
         send_text = get_luis(text.replace("[luis]", ""))
         reply = ""
