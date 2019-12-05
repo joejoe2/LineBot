@@ -15,7 +15,7 @@ from linebot.exceptions import (
     InvalidSignatureError
 )
 from linebot.models import (
-    MessageEvent, TextMessage, TextSendMessage, ImageSendMessage, FileMessage
+    MessageEvent, TextMessage, TextSendMessage, ImageSendMessage
 )
 
 # const key
@@ -271,6 +271,11 @@ def iotentry():
 
 @app.route('/getfsm', methods=['GET'])
 def getfsm():
+    """
+    callback for downloading fsm1 or 2 .png
+
+    :return:  .png file
+    """
     f = request.args.get("f")
     f = "fsm2.png" if f == '2' else "fsm1.png"
     try:

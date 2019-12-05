@@ -47,7 +47,7 @@ class gotcha(object):
         self.st5 = 0
         pass
 
-    def test(self):
+    def state_tran(self):
         t = self.total
         s3r = self.total3 / t
         s4r = self.total4 / t
@@ -88,8 +88,8 @@ class gotcha(object):
         if self.total == 0:
             return "no data now\nplease type [gotcha] or [gotcha]10 first !"
         else:
-            return str(self.id)+" gotcha machine's luck is in state:\n\n" + str(
-                self.submachine.state) + "\n\n" + "total: " + str(self.total) + \
+            return "gotcha machine's luck is in state:\n\n" + str(
+                    self.submachine.state) + "\n\n" + "total: " + str(self.total) + \
                    "\n5★=" + str(self.total5 / self.total * 100) + "%" + "\n4★=" + \
                    str(self.total4 / self.total * 100) + "%" + "\n3★=" + str(self.total3 / self.total * 100) + "%" + \
                    "\n\n" + self.get_msg()
@@ -167,7 +167,7 @@ class gotcha(object):
             t = True
             pass
         self.total += 1
-        self.test()
+        self.state_tran()
         return l, r, t
         pass
 
