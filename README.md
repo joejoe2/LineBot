@@ -1,5 +1,8 @@
 # LineBot
 
+![image](https://github.com/joejoe2/LineBot/blob/master/fsm1.png)
+
+![image](https://github.com/joejoe2/LineBot/blob/master/fsm2.png)
 
 deployed by heroku :
 ------------------
