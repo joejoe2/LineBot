@@ -104,6 +104,11 @@ def handle_message(event: MessageEvent):
     """
         handle different kinds of input or cmd
     """
+    if event.source.type == "group":
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(text="join group: "+event.source.group_id))
+        return
+        pass
+
     text: str = event.message.text
     user_id = event.source.user_id
     print(user_id)
@@ -262,9 +267,13 @@ def iotentry():
     """
     msg = request.args.get("msg")
     key = request.args.get("k")
+    uid = request.args.get("id")
     if key == iotkey:
-        line_bot_api.broadcast(TextSendMessage(text="iot test push : " + str(msg)))
-        return "iot broadcast " + msg + " complete !"
+        try:
+            line_bot_api.push_message(str(uid), TextSendMessage(text=str(msg)))
+        except Exception as ex:
+            print(ex)
+        return "iot push " + msg + " complete !"
     else:
         return "access denied"
 
