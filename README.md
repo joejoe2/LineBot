@@ -2,6 +2,7 @@
 
 basic instructions:
 1.[gotcha]     (simulate gotcha in fate grand order)
+
 [gotcha] -> 單抽
 
 [gotcha]10 -> 十連抽(有保底四星禮裝或從者)
@@ -10,9 +11,9 @@ basic instructions:
 
 [gotcha]star3 -> 單抽,只抽三星
 
-[gotcha]star4 -> 單抽,只抽三星
+[gotcha]star4 -> 單抽,只抽四星
 
-[gotcha]star5 -> 單抽,只抽三星
+[gotcha]star5 -> 單抽,只抽五星
 
 2.[luis]+something to say  (chineese only)
 
@@ -24,7 +25,7 @@ ex. [luis]早安阿 -> then bot will reply
 
 type of sentence could be replied
 
-![image]()
+![image](https://github.com/joejoe2/LineBot/blob/master/luis.jpg)
 
 
 
